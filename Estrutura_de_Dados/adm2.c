@@ -43,7 +43,7 @@ int busca(char tempString[12]);
 
 void removerPessoas();
 
-void mostrarPessoa();
+void mostrarPessoa(int i);
 
 void exibirUmRegistro();
 
@@ -51,12 +51,15 @@ void exibirTodosRegistros();
 
 
 int main(void){
-    cadastroP = realloc(NULL, sizeof(Pessoa)*1);
-
+    cadastroP = realloc(NULL, sizeof(Pessoa *)*1);
+    capacidade = 1;
     if(cadastroP==NULL){
         printf("erro ao alocar memoria\n");
         exit(1);
     }
+
+    cadastroP[0]=NULL;
+
     int opt=0;
     printf(">> CADASTRO DE PESSOAS <<\n");
     do{
@@ -92,22 +95,29 @@ int main(void){
         }
     }while(opt!=0);
 
+    for(int i=0; i<totalPessoas; i++){
+        free(cadastroP[i]);
+    }
+
     free(cadastroP);
     cadastroP = NULL;
 
     return 0;
 }
+
 int alocar(){
-    int novaCapacidade = (capacidade) + 3;
+    int novaCapacidade = capacidade + 3;
         
-    Pessoa *tempPtr = realloc(cadastroP, sizeof(Pessoa)*novaCapacidade);
+    Pessoa **tempPtr = realloc(cadastroP, sizeof(Pessoa *)*novaCapacidade);
     if(tempPtr==NULL){
         printf("\nerro ao alocar memoria\n");
         return 1;
     }
     cadastroP = tempPtr;
-
-    (capacidade) = novaCapacidade;
+    for(int i = capacidade; i<novaCapacidade; i++){
+        cadastroP[i]=NULL;
+    }
+    capacidade = novaCapacidade;
     printf("\nalocacao feita com sucesso\n");
 
     return 0;
@@ -121,12 +131,12 @@ int desalocar(){
         capacidade = 0;
         return 0;
     }
-    Pessoa *tempPtr = realloc(*cadastroP, sizeof(Pessoa)*totalPessoas);
+    Pessoa **tempPtr = realloc(cadastroP, sizeof(Pessoa *)*totalPessoas);
     if(tempPtr==NULL){
         printf("\nerro ao realocar memoria\n");
         return 1;
     }
-    *cadastroP = tempPtr;
+    cadastroP = tempPtr;
     (capacidade) = totalPessoas;
     printf("\nrealocacao feita com sucesso\n");
     return 0;
@@ -143,6 +153,11 @@ void cadastrarPessoa(){
 
         cadastroP[totalPessoas] = realloc(NULL, sizeof(Pessoa)); // precisamos alocar o tamanho de bytes de pessoas para o ponteiro no vetor 
 
+        if(cadastroP[totalPessoas]==NULL){
+            printf("erro catastrofico\n");
+            break;
+        }
+
         printf("\ninsira o nome da Pessoa: ");
         scanf(" %20s", cadastroP[totalPessoas]->nome);
         limparBuffer();
@@ -151,8 +166,8 @@ void cadastrarPessoa(){
         scanf(" %11s", cadastroP[totalPessoas]->cpf);
         limparBuffer();
 
-        pritf("\ninsira a idade da pessoa: ");
-        scanf(" %i", cadastroP[totalPessoas]->idade);
+        printf("\ninsira a idade da pessoa: ");
+        scanf(" %i", &cadastroP[totalPessoas]->idade);
         limparBuffer();
 
         printf("\ninsira o sexo da pessoa\n[F] Feminino\n[M] Masculino\n");
@@ -188,6 +203,7 @@ void alterarPessoas(){
     char tempS[12];
     printf("\ninsira o cpf da pessoa que deseja alterar:\n");
     scanf(" %s", tempS);
+    limparBuffer();
 
     int i = busca(tempS);
 
@@ -201,7 +217,7 @@ void alterarPessoas(){
         limparBuffer();
 
         printf("\ninsira a idade da pessoa: ");
-        scanf(" %i", cadastroP[i]->idade);
+        scanf(" %i", &cadastroP[i]->idade);
         limparBuffer();
 
         printf("\ninsira o sexo da pessoa\n[F] Feminino\n[M] Masculino\n");
@@ -244,13 +260,14 @@ void removerPessoas(){
     int i = busca(tempS);
     
     if(i!=-1){
-        for(int j = i; j<(totalPessoas)-1; j++){
-            (cadastroP)[j]=(cadastroP)[j+1];
+        free(cadastroP[i]);
+        for(int j = i; j<totalPessoas-1; j++){
+            cadastroP[j]=cadastroP[j+1];
         }
         printf("\nregistro removido\n");
-        (totalPessoas)--;
+        totalPessoas--;
 
-        if((capacidade) - (totalPessoas) > 5){
+        if(capacidade - totalPessoas > 5){
             desalocar();
         }
     }
@@ -287,4 +304,9 @@ void exibirTodosRegistros(){
     for(int i = 0; i<totalPessoas; i++){
         mostrarPessoa(i);
     }
+}
+
+void limparBuffer(){
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF){}
 }
