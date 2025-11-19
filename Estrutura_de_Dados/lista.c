@@ -69,9 +69,24 @@ void cadastrarPessoa(){
         scanf(" %c", &tempC);
 
     }while(tolower(tempC)=='s');
-
 }
 
+void removerCadastro(){
+    if(head==NULL){
+        printf("lista vazia, nada a remover. \n");
+        return;
+    }
+}
+
+int buscar(char cpf[12]){
+    int con=1;
+    noPessoa *noAtual = head;
+    while(noAtual!=NULL){
+        if(strcmp(cpf, *noAtual->cpf)==0)
+            return con;
+        noAtual = noAtual->proximo;
+    }
+}
 
 int main(void){
     int opt=0;
