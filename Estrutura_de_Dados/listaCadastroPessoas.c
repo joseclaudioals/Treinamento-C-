@@ -172,33 +172,28 @@ void removerCadastro(){
         printf("lista vazia, nada a remover. \n");
         return;
     }
-    noPessoa* nodeDesejado = head;
+   noPessoa* nodeAtual = head;
+   noPessoa* nodeAnterior = NULL;
 
-    int con=0;
-    while(nodeDesejado!=NULL){
-        if(strcmp(nodeDesejado->cpf, cpf)==0){
-            break;
-        }
-        con++;
+   while(nodeAtual!=NULL && strcmp(nodeAtual->cpf, cpf)!=0){
+    nodeAnterior = nodeAtual;
+    nodeAtual = nodeAtual->proximo;
+   }
+
+   if(nodeAtual==NULL){
+    printf("CPF nao encontrado!\n");
+    return;
+   }
+
+   if(nodeAtual==head){
+    head=nodeAtual->proximo;
+   }
+   else{   
+    nodeAnterior->proximo=nodeAtual->proximo;
     }
-    noPessoa* nodeAnterior =head;
-
-    if(con==0){
-        head=nodeAnterior->proximo;
-        printf("Cadastro: %s\nCadastro apagado\n", nodeDesejado->nome);
-        free(nodeDesejado);
-        return;
-    }
-
-    for(int i=0; nodeAnterior!=NULL && i<con-1; i++){
-        nodeDesejado = nodeAnterior->proximo;
-        nodeAnterior->proximo=nodeDesejado->proximo;
-
-        if(nodeDesejado!=NULL){
-            printf("Cadastro: %s\nCadastro apagado\n", nodeDesejado->nome);
-            free(nodeDesejado);
-        }
-    }
+    printf("Removendo Cadasro de: %s\n", nodeAtual->nome);
+    free(nodeAtual);
+ 
 }
 void exibirUmRegistro(){
     char cpf[12];
