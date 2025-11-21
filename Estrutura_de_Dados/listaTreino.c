@@ -37,7 +37,7 @@ int main(void){
         }
     }while(opt!=4);
 
-    //limparNodes();
+    limparNodes();
     
     return 0;
 }
@@ -122,4 +122,16 @@ void imprimirTodos(){
         printf("valor: %i\n", temp->valor);
         temp = temp->proxNode;
     }
+}
+void limparNodes(){
+    Node *noAtual = head;
+    Node *proximo;
+
+    while(noAtual!=NULL){
+        proximo = noAtual->proxNode;
+        free(noAtual);
+        noAtual = proximo;
+    }
+
+    head = NULL;
 }
