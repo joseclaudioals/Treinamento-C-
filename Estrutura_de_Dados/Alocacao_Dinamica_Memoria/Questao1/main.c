@@ -16,7 +16,7 @@ int main(void){
     }
 
     printf(">> Cadastro Carro <<\n");
-    printf("Insira o modelo:");
+    printf("Insira o modelo:\n");
     scanf(" %s", meuCarro->modelo);
     printf("Insira a placa:\n");
     scanf(" %s", meuCarro->placa);
@@ -25,8 +25,10 @@ int main(void){
 
     printf("\n>> Cadastro Carro <<\n");
     printf("Modelo: %s\n", meuCarro->modelo);
-    printf("Placa: %s", meuCarro->placa);
+    printf("Placa: %s\n", meuCarro->placa);
     printf("Ano: %i\n", meuCarro->ano);
 
     free(meuCarro);
+
+    return 0;
 }
