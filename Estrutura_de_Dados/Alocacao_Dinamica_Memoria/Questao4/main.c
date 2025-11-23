@@ -36,5 +36,6 @@ int main(void){
     }
 
     free(estoque);
+    estoque = NULL;
     return 0;
 }

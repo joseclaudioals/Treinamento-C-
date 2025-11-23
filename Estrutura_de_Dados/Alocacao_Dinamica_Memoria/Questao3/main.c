@@ -13,6 +13,7 @@ int main(void){
     printf("Ponto x: %i\nPonto y: %i", p1->x, p1->y);
 
     free(p1);
+    p1 = NULL;
     return 0;
 }
 

@@ -28,6 +28,7 @@ int main(void){
     printf("Media da turma:%.2f\n", media);
     
     free(diarioNotas);
+    diarioNotas=NULL;
     return 0;
 }
 

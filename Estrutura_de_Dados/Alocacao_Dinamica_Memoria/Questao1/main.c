@@ -30,5 +30,6 @@ int main(void){
 
     free(meuCarro);
 
+    meuCarro= NULL;
     return 0;
 }
