@@ -15,7 +15,7 @@ int main(void){
     int capacidade = 3;
     int total = 0;
     int opt=0;
-    listaPessoa = malloc(capacidade*sizeof(Pessoa));
+    listaPessoa = malloc(capacidade * sizeof(Pessoa*));
 
     if(listaPessoa==NULL){
         printf("erro ao alocar memoria\n");
@@ -34,6 +34,13 @@ int main(void){
                 break;
             case 2:
                 otimizarMemoria(&listaPessoa, total, &capacidade);
+                break;
+            case 3:
+                Pessoa** copiaPessoa=NULL;
+                copiarCadastro(listaPessoa, total, &copiaPessoa);
+                for(int i=0; i<total; i++){
+                    printf("\nPessoa %i\nNome: %s\nIdade: %i\n", i+1, copiaPessoa[i]->nome, copiaPessoa[i]->idade);
+    }
                 break;
             case 0:
                 printf("saindo do programa\n");
@@ -61,19 +68,17 @@ void limparBuffer(){
     while((c=getchar())!='\n' && c!=EOF){}
 }
 
-
-
 void adicionarPessoa(Pessoa** listaPessoa, int* total, int* capacidade){
     int opt;
     do{    
         if((*total)<(*capacidade)){
-            Pessoa* p = malloc(sizeof(Pessoa*));
+            Pessoa* p = malloc(sizeof(Pessoa));
 
             if(p==NULL){
                 printf("erro ao alocar memoria\n");
                 return;
             }
-            (listaPessoa)[*total]=p;
+            listaPessoa[*total]=p;
 
             printf("Insira o nome: \n");
             scanf(" %s", (listaPessoa)[*total]->nome);
@@ -93,8 +98,6 @@ void adicionarPessoa(Pessoa** listaPessoa, int* total, int* capacidade){
     }while(opt==1);
 
 }
-
-
 
 void otimizarMemoria(Pessoa*** listaPessoa, int total, int* capacidade){
     int novaCapacidade;
@@ -126,4 +129,19 @@ void otimizarMemoria(Pessoa*** listaPessoa, int total, int* capacidade){
         *listaPessoa = tempLista;
     }
 
+}
+
+void copiarCadastro(Pessoa** listaPessoa, int total, Pessoa*** listaCopia){
+    *listaCopia = malloc(sizeof(Pessoa*)*total);
+
+    for(int i=0; i<total; i++){
+        (*listaCopia)[i]=malloc(sizeof(Pessoa));
+        if((*listaCopia)[i] == NULL){
+            for(int j=0; j<i; j++) free((*listaCopia)[j]);
+            free(*listaCopia);
+            *listaCopia = NULL;
+            return;
+        }
+        *(*listaCopia)[i] = *listaPessoa[i];
+    }
 }
