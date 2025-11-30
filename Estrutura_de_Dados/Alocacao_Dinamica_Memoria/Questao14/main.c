@@ -35,13 +35,6 @@ int main(void){
             case 2:
                 otimizarMemoria(&listaPessoa, total, &capacidade);
                 break;
-            case 3:
-                Pessoa** copiaPessoa=NULL;
-                copiarCadastro(listaPessoa, total, &copiaPessoa);
-                for(int i=0; i<total; i++){
-                    printf("\nPessoa %i\nNome: %s\nIdade: %i\n", i+1, copiaPessoa[i]->nome, copiaPessoa[i]->idade);
-    }
-                break;
             case 0:
                 printf("saindo do programa\n");
                 break;
@@ -131,17 +124,3 @@ void otimizarMemoria(Pessoa*** listaPessoa, int total, int* capacidade){
 
 }
 
-void copiarCadastro(Pessoa** listaPessoa, int total, Pessoa*** listaCopia){
-    *listaCopia = malloc(sizeof(Pessoa*)*total);
-
-    for(int i=0; i<total; i++){
-        (*listaCopia)[i]=malloc(sizeof(Pessoa));
-        if((*listaCopia)[i] == NULL){
-            for(int j=0; j<i; j++) free((*listaCopia)[j]);
-            free(*listaCopia);
-            *listaCopia = NULL;
-            return;
-        }
-        *(*listaCopia)[i] = *listaPessoa[i];
-    }
-}
