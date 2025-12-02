@@ -1,35 +1,104 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Carro{
-    char modelo[20];
-    char placa[20];
-    int ano
-}Carro;
+typedef struct Documento{
+    char nome[50];
+    int paginas;
+    struct Documento* proximo;
+}Documento;
+
+typedef struct Fila{
+    Documento* inicio;
+    Documento* fim;
+}Fila;
 
 int main(void){
-    Carro* meuCarro = malloc(sizeof(Carro));
+    Fila* filaImpressora;
+    int opt;
 
-    if(meuCarro==NULL){
-        printf("Falha catastrofica!\nErro na aloação\n");
-        return 0;
+    incializarFila(&filaImpressora);
+
+    do{
+        printf("adicionar documento - 1\n");
+        printf("imprimir ------------ 2\n");
+        printf("sair --------------- 0\n");
+        scanf(" %i", &opt);
+        switch(opt){
+            case 1: 
+                
+                break;
+            case 2:
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opcao invalida\n");
+        }
+        
+    }while(opt!=0);
+
+
+    return 0;
+}
+
+void incializarFila(Fila* f){
+    f->fim = NULL;
+    f->inicio = NULL;
+}
+
+void adicionarDocumento(Fila* f){
+    Documento* novoDocumento = malloc(sizeof(Documento));
+
+    if(novoDocumento==NULL){
+        printf("Erro ao alocar memoria\n");
+        return;
     }
 
-    printf(">> Cadastro Carro <<\n");
-    printf("Insira o modelo:\n");
-    scanf(" %s", meuCarro->modelo);
-    printf("Insira a placa:\n");
-    scanf(" %s", meuCarro->placa);
-    printf("Insira o ano:\n");
-    scanf(" %i", &meuCarro->ano);
+    printf("Insira o nome do arquivo:\n");
+    scanf(" %20[^\n]", novoDocumento->nome);
+    printf("Insira a quantidade de paginas:\n");
+    scanf(" %i", &novoDocumento->paginas);
 
-    printf("\n>> Cadastro Carro <<\n");
-    printf("Modelo: %s\n", meuCarro->modelo);
-    printf("Placa: %s\n", meuCarro->placa);
-    printf("Ano: %i\n", meuCarro->ano);
+    novoDocumento->proximo=NULL;
 
-    free(meuCarro);
+    if(f->inicio==NULL){
+        f->inicio=novoDocumento;
+        f->fim=novoDocumento;
+        return;
+    }
 
-    meuCarro= NULL;
-    return 0;
+    f->fim->proximo=novoDocumento; //ligo o antigo ultimo com o novo ultimo
+    f->fim=novoDocumento; //novo documento é o novo fim da lista
+}
+
+void imprimir(Fila* f){
+    if(f->inicio==NULL){
+        printf("Lista vazia\n");
+        return;
+    }
+
+    Documento* temp = f->inicio;
+    printf("Imprimindo %s\n", temp->nome);
+    f->inicio=temp->proximo;
+
+    if(f->inicio==NULL){ //tratando fila com apenas um elemento
+        f->fim;
+    }
+
+    free(temp);
+}
+
+void liberarFila(Fila* f){
+    Documento* atual = f->inicio;
+    Documento* proximo;
+
+    while(atual!=NULL){
+        proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+    f->fim=NULL;
+    f->inicio=NULL;
+
+    printf("memoria liberada\n");
 }
