@@ -1,35 +1,101 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Carro{
-    char modelo[20];
-    char placa[20];
-    int ano
-}Carro;
+typedef struct Aluno{
+    char nome[21];
+    float nota;
+    struct Aluno* proximo;
+}Aluno;
+
+void adicionarNota(Aluno** head);
+void imprimirLista(Aluno* head);
+void liberarLista(Aluno **head);
 
 int main(void){
-    Carro* meuCarro = malloc(sizeof(Carro));
+    Aluno* head=NULL;
+    int opt;
+    do{
+        printf("adicionar aluno ---- 1\n");
+        printf("imprimir notas - --- 2\n");
+        printf("sair --------------- 0\n");
+        scanf(" %i", &opt);
+        switch(opt){
+            case 1: 
+                adicionarNota(&head);
+                break;
+            case 2:
+                imprimirLista(head);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opcao invalida\n");
+        }
+    }while(opt!=0);
 
-    if(meuCarro==NULL){
-        printf("Falha catastrofica!\nErro na aloação\n");
-        return 0;
+    liberarLista(&head);
+
+    return 0;
+}
+
+void adicionarNota(Aluno** head){
+    Aluno* novoAluno = malloc(sizeof(Aluno));
+
+    if(novoAluno==NULL){
+        printf("erro de alocacao\n");
+        return;
     }
 
-    printf(">> Cadastro Carro <<\n");
-    printf("Insira o modelo:\n");
-    scanf(" %s", meuCarro->modelo);
-    printf("Insira a placa:\n");
-    scanf(" %s", meuCarro->placa);
-    printf("Insira o ano:\n");
-    scanf(" %i", &meuCarro->ano);
+    printf("insira nome do aluno:\n");
+    scanf(" %20[^\n]", novoAluno->nome);
+    printf("insira nota do aluno\n");
+    scanf(" %f", &novoAluno->nota);
 
-    printf("\n>> Cadastro Carro <<\n");
-    printf("Modelo: %s\n", meuCarro->modelo);
-    printf("Placa: %s\n", meuCarro->placa);
-    printf("Ano: %i\n", meuCarro->ano);
+    if(*head==NULL){
+        novoAluno->proximo = *head;
+        *head = novoAluno;
+        return;
+    }
 
-    free(meuCarro);
+    Aluno* anterior=NULL;
+    Aluno* atual = *head;
 
-    meuCarro= NULL;
-    return 0;
+    while(atual!=NULL && novoAluno->nota<atual->nota){
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    if(anterior==NULL){
+        novoAluno->proximo = *head;
+        *head = novoAluno;
+        return;
+    }
+
+    anterior->proximo = novoAluno;
+    novoAluno->proximo = atual;
+}
+
+void imprimirLista(Aluno* head){
+    Aluno* atual = head;
+    Aluno* proximo;
+
+    while(atual!=NULL){
+        printf("Aluno: %s\n", atual->nome);
+        printf("Nota: %.2f\n", atual->nota);
+        proximo = atual->proximo;
+        atual = proximo;
+    }
+}
+
+void liberarLista(Aluno **head){
+    Aluno* atual = *head;
+    Aluno* proximo;
+
+    while(atual!=NULL){
+        proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+
+    *head = NULL;
 }

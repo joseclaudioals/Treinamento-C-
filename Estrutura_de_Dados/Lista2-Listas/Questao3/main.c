@@ -12,8 +12,13 @@ typedef struct Fila{
     Documento* fim;
 }Fila;
 
+void incializarFila(Fila* f);
+void adicionarDocumento(Fila* f);
+void imprimir(Fila* f);
+void liberarFila(Fila* f);
+
 int main(void){
-    Fila* filaImpressora;
+    Fila filaImpressora;
     int opt;
 
     incializarFila(&filaImpressora);
@@ -25,9 +30,10 @@ int main(void){
         scanf(" %i", &opt);
         switch(opt){
             case 1: 
-                
+                adicionarDocumento(&filaImpressora);
                 break;
             case 2:
+                imprimir(&filaImpressora);
                 break;
             case 0:
                 break;
@@ -82,7 +88,7 @@ void imprimir(Fila* f){
     f->inicio=temp->proximo;
 
     if(f->inicio==NULL){ //tratando fila com apenas um elemento
-        f->fim;
+        f->fim=NULL;
     }
 
     free(temp);
