@@ -27,15 +27,15 @@ O código é multiplataforma e pode ser compilado em Windows ou Linux.
 
 Bash
 
-`gcc simulador_fat.c -o simulador.exe
-./simulador.exe`
+`gcc simulador_fat.c -o fat.exe
+./fat.exe`
 
 ### No Linux:
 
 Bash
 
-`gcc simulador_fat.c -o simulador
-./simulador`
+`gcc simulador_fat.c -o fat
+./fat`
 
 ## 📊 Exemplo de Fluxo
 
