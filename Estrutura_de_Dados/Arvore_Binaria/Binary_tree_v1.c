@@ -23,7 +23,7 @@ void inserirDinamico(Node** raiz, int inicio, int fim, int* arr){
     inserirDinamico(&(*raiz)->direita, meio+1, fim, arr);
 }
 
-void printarArvore(Node* raiz, int margem) {
+void printarArvore(const Node* raiz, int margem) {
     if (raiz==NULL) return;
 
     int distancia = 5;
