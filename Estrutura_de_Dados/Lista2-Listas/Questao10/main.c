@@ -4,7 +4,7 @@
 typedef struct Carro{
     char modelo[20];
     char placa[20];
-    int ano
+    int ano;
 }Carro;
 
 int main(void){
