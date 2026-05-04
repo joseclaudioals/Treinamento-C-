@@ -132,3 +132,74 @@ int height(const Node* a) {
 int balance(const Node* a, const Node* b) {
     return height(a) - height(b);
 }
+
+void destroy_tree(Node* root) {
+    if (root!=NULL) {
+        destroy(root->left);
+        destroy(root->right);
+        free(root);
+    }
+}
+
+Node* min_key(Node* root) {
+    if (root==NULL)
+        return NULL;
+
+    while (root->left!=NULL) root = root->left;
+
+    return root;
+}
+
+Node* max_key(Node* root) {
+    if (root==NULL)
+        return NULL;
+
+    while (root->right!=NULL) root = root->right;
+
+    return root;
+}
+
+Node* search(Node* root, int value) {
+    if (root == NULL || root->key == value)
+        return root;
+
+    if (value<root->key)
+        return search(root->left, value);
+    else
+        return search(root->right, value);
+}
+
+void print_tree(Node* root, int s) {
+    if (root != NULL) {
+        print_tree(root->left, s+5);
+        for (int i=0; i<s; i++) printf(" ");
+        printf("%i \n", root->key);
+        print_tree(root, s+5);
+    }
+}
+
+Node* sucessor(Node* root) {
+    if (root->right != NULL)
+        return min_key(root->right);
+
+    Node* parent = root->parent;
+    while ( parent != NULL && parent.right = root) {
+        root = parent;
+        parent = parent->parent;
+    }
+
+    return parent;
+}
+
+Node* predecessor(Node* root) {
+    if (root->left != NULL)
+        return max_key(root->left);
+
+    Node* parent = root->parent;
+    while ( parent != NULL && parent.left = root) {
+        root = parent;
+        parent = parent->parent;
+    }
+
+    return parent;
+}
