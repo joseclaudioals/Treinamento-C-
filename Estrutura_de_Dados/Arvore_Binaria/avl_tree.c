@@ -10,18 +10,42 @@ typedef struct Node {
 }Node;
 
 int height(const Node* a);
-int balance(const Node* a, const Node* b);
+int balance(const Node* a);
+Node* insert(Node* root, Node* parent, int value);
 Node* ll_rotation(Node* y);
 Node* rr_rotation(Node* y);
 Node* lr_rotation(Node* y);
 Node* rl_rotation(Node* y);
+Node* min_key(Node* root);
+Node* max_key(Node* root);
+Node* search(Node* root, int value);
+Node* sucessor(const Node* root);
+Node* predecessor(const Node* root);
+Node* delete_node(Node* root, int value);
+void print_tree(const Node* root, int s);
+void destroy_tree(Node* root);
 
 int main(void) {
-    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     Node* root = NULL;
+    int valores[] = {10, 20, 30, 40, 50, 25};
+    int n = sizeof(valores) / sizeof(valores[0]);
 
+    printf("--- Inserindo valores ---\n");
+    for (int i = 0; i < n; i++) {
+        root = insert(root, NULL, valores[i]);
+    }
 
-    root = NULL;
+    print_tree(root, 0);
+
+    printf("\n--- Removendo o 30 ---\n");
+    root = delete_node(root, 30);
+    print_tree(root, 0);
+
+    printf("\n--- Removendo a raiz (25) ---\n");
+    root = delete_node(root, 25);
+    print_tree(root, 0);
+
+    destroy_tree(root);
     return 0;
 }
 
@@ -41,24 +65,24 @@ Node* insert(Node* root, Node* parent, int value) {
     }
 
     if (value < root->key)
-        root->left = insert(root->left, root->parent, value);
+        root->left = insert(root->left, root, value);
     else if (value > root->key)
-        root->right = insert(root->right, root->parent, value);
+        root->right = insert(root->right, root, value);
     else
         return root;
 
     root->parent = parent;
     root->height = max(height(root->left), height(root->right)) +1;
 
-    int bf = balance(root->left, root->right);
+    int bf = balance(root);
 
     if (bf > 1 && value < root->left->key)
         return ll_rotation(root);
     if (bf < -1 && value > root->right->key)
         return rr_rotation(root);
-    if (bf < -1 && value > root->left->key)
+    if (bf > 1 && value > root->left->key)
         return lr_rotation(root);
-    if (bf > 1 && value < root->right->key)
+    if (bf < -1 && value < root->right->key)
         return rl_rotation(root);
 
     return root;
@@ -70,6 +94,8 @@ Node* ll_rotation(Node* y) {
 
     x->right = y;
     y->left = sub_tree;
+
+    x->parent = y->parent;
 
     if (y->parent != NULL) {
         if (y->parent->left == y)
@@ -95,6 +121,8 @@ Node* rr_rotation(Node* y) {
 
     x->left = y;
     y->right = sub_tree;
+
+    x->parent = y->parent;
 
     if (y->parent != NULL) {
         if (y->parent->left == y)
@@ -129,14 +157,14 @@ int height(const Node* a) {
     return a->height;
 }
 
-int balance(const Node* a, const Node* b) {
-    return height(a) - height(b);
+int balance(const Node* a) {
+    return height(a->left) - height(a->right);
 }
 
 void destroy_tree(Node* root) {
     if (root!=NULL) {
-        destroy(root->left);
-        destroy(root->right);
+        destroy_tree(root->left);
+        destroy_tree(root->right);
         free(root);
     }
 }
@@ -169,21 +197,21 @@ Node* search(Node* root, int value) {
         return search(root->right, value);
 }
 
-void print_tree(Node* root, int s) {
+void print_tree(const Node* root, int s) {
     if (root != NULL) {
         print_tree(root->left, s+5);
         for (int i=0; i<s; i++) printf(" ");
         printf("%i \n", root->key);
-        print_tree(root, s+5);
+        print_tree(root->right, s+5);
     }
 }
 
-Node* sucessor(Node* root) {
+Node* sucessor(const Node* root) {
     if (root->right != NULL)
         return min_key(root->right);
 
     Node* parent = root->parent;
-    while ( parent != NULL && parent.right = root) {
+    while ( parent != NULL && parent->right == root) {
         root = parent;
         parent = parent->parent;
     }
@@ -191,12 +219,12 @@ Node* sucessor(Node* root) {
     return parent;
 }
 
-Node* predecessor(Node* root) {
+Node* predecessor(const Node* root) {
     if (root->left != NULL)
         return max_key(root->left);
 
     Node* parent = root->parent;
-    while ( parent != NULL && parent.left = root) {
+    while ( parent != NULL && parent->left == root) {
         root = parent;
         parent = parent->parent;
     }
@@ -213,28 +241,28 @@ Node* delete_node(Node* root, int value) {
         root->right = delete_node(root->right, value);
     else {
         if (root->left == NULL || root->right == NULL) {
-            Node* temp = NULL;
+            Node* temp = root->left ? root->left : root->right;
 
-            if (root->left != NULL)
-                temp = root->left;
-            else
-                temp = root->right;
-
-            //the node was a leaf
+            //o node era uma folha
             if (temp==NULL) {
-                free(root);
+                temp = root;
                 root = NULL;
+            }else {
+                root->key = temp->key;
+                root->left = temp->left;
+                root->right = temp->right;
+
+                if (root->left != NULL) root->left->parent = root;
+                if (root->right != NULL) root->right->parent = root;
             }
-            else {
-                temp->parent = root->parent;
-                copy(root, temp);
-                return temp;
-            }
+            free(temp);
+        }else {
+            Node* temp = sucessor(root);
+            root->key = temp->key;
+            root->right = delete_node(root->right, temp->key); // deletamos o sucessor
         }
     }
-
-    if (root == NULL)
-        return root;
+    if (root == NULL) return root;
 
     root->height = max(height(root->left), height(root->right)) + 1;
     int bf = balance(root);
@@ -242,22 +270,16 @@ Node* delete_node(Node* root, int value) {
     if (bf > 1) {
         if (balance(root->left) >= 0)
             return ll_rotation(root);
-        else
+        else {
             return lr_rotation(root);
+        }
     }
-    if (bf < 1)
+    if (bf < -1) {
         if (balance(root->right) <= 0)
             return rr_rotation(root);
-        else
+        else {
             return rl_rotation(root);
-
+        }
+    }
     return root;
-}
-
-void copy(Node* a, Node* b) {
-    a->right = b->right;
-    a->left = b->left;
-    a->height = b->height;
-    a->key = b->key;
-    a->parent = b->parent;
 }
