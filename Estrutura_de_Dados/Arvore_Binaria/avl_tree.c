@@ -203,3 +203,61 @@ Node* predecessor(Node* root) {
 
     return parent;
 }
+
+Node* delete_node(Node* root, int value) {
+    if (root==NULL)
+        return root;
+    if (value < root->key)
+        root->left = delete_node(root->left, value);
+    else if (value > root->key)
+        root->right = delete_node(root->right, value);
+    else {
+        if (root->left == NULL || root->right == NULL) {
+            Node* temp = NULL;
+
+            if (root->left != NULL)
+                temp = root->left;
+            else
+                temp = root->right;
+
+            //the node was a leaf
+            if (temp==NULL) {
+                free(root);
+                root = NULL;
+            }
+            else {
+                temp->parent = root->parent;
+                copy(root, temp);
+                return temp;
+            }
+        }
+    }
+
+    if (root == NULL)
+        return root;
+
+    root->height = max(height(root->left), height(root->right)) + 1;
+    int bf = balance(root);
+
+    if (bf > 1) {
+        if (balance(root->left) >= 0)
+            return ll_rotation(root);
+        else
+            return lr_rotation(root);
+    }
+    if (bf < 1)
+        if (balance(root->right) <= 0)
+            return rr_rotation(root);
+        else
+            return rl_rotation(root);
+
+    return root;
+}
+
+void copy(Node* a, Node* b) {
+    a->right = b->right;
+    a->left = b->left;
+    a->height = b->height;
+    a->key = b->key;
+    a->parent = b->parent;
+}
