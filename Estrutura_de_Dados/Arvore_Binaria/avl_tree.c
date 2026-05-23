@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
 typedef struct Node {
